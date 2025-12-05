@@ -8,14 +8,23 @@ from bloqit_api.schemas.rents import Rent
 DATA_PATH = Path(__file__).parent
 
 
-#general function to read json
+#general function to read json - input
+#json to py (desserializ)
 def read_json(filename:str):
     file_path = DATA_PATH/filename
     with open(DATA_PATH/file_path, "r", encoding="utf-8") as f:
         return json.load(f)
 
+#general function to write json - output
 
-#gave us json content
+def write_json(filename: str, data):
+    file = DATA_PATH/filename
+    with open(file, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4)
+
+
+
+#gave us json(raw)content
 def get_bloqs():
     return read_json("bloqs.json")
 
@@ -26,7 +35,6 @@ def get_lockers():
 
 def get_rents():
     return read_json("rents.json")
-
 
 
 #convert to pydantic
