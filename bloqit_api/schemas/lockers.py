@@ -1,11 +1,19 @@
 from pydantic import BaseModel
+from enum import Enum
 
+class LockerStatus(str, Enum):
+    OPEN = "OPEN"
+    CLOSED = "CLOSED"
+#we can add more status if needed, now we have these two
 
 
 
 class Locker(BaseModel):
     id: str
     bloq_id: str
+    status: LockerStatus
+    isOcuppied: bool
+
     
 
 
