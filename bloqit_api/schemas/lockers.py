@@ -10,9 +10,9 @@ class LockerStatus(str, Enum):
 
 class Locker(BaseModel):
     id: str
-    bloq_id: str
+    bloqId: str
     status: LockerStatus
-    isOcuppied: bool
+    isOccupied: bool
 
     
 

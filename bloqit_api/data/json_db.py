@@ -4,18 +4,18 @@ from bloqit_api.schemas.blocks import Bloq
 from bloqit_api.schemas.lockers import Locker 
 from bloqit_api.schemas.rents import Rent
 
+#json files path
+DATA_PATH = Path(__file__).parent
 
-DATA_PATH = Path("bloqit_api/data")
 
-
-
+#general function to read json
 def read_json(filename:str):
     file_path = DATA_PATH/filename
     with open(DATA_PATH/file_path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
-
+#gave us json content
 def get_bloqs():
     return read_json("bloqs.json")
 
@@ -29,6 +29,21 @@ def get_rents():
 
 
 
-
+#convert to pydantic
 def load_bloqs():
-    return 
+    list =[]
+    for b in get_bloqs():
+        list.append(Bloq(**b))
+    return list
+
+def load_lockers():
+    list = []
+    for l in get_lockers():
+        list.append(Locker(**l))
+    return list
+    
+def load_rents():
+    list = []
+    for r in get_rents():
+        list.append(Rent(**r))
+    return list

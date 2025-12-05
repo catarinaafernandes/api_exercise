@@ -9,7 +9,7 @@ class RentStatus(str,Enum):
 
 class Rent(BaseModel):
   id: str
-  locker_id: str|None   #saw in rents.json
+  lockerId: str|None   #saw in rents.json
   weight: int
   size:str
   status: RentStatus
