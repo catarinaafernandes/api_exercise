@@ -17,4 +17,6 @@ print("waiting pickup", rent)
 rent = retrieve(rent.id)
 print("delivered:", rent)
 
+
+
 #TODO: test passed, reset jsons - need to track modifications to logfiles      

@@ -1,12 +1,13 @@
 # 1 rent -> 1 locker -> 1 block
 #dropoff / retrieve - important methods for business logic
-#workfow: create -dropoff- confirm dropoff - retireve
+#workflow: create -dropoff- confirm dropoff - retireve
 
 from bloqit_api.data.json_db import load_rents, load_lockers, write_json
 from bloqit_api.schemas.lockers import Locker
 from datetime import datetime
 import uuid #To generate unique IDs
 from bloqit_api.schemas.rents import RentSize, RentStatus, Rent
+from bloqit_api.services.logger import log_change
 
 
 RENTS_FILE = "rents.json"
@@ -16,15 +17,35 @@ LOCKERS_FILE = "lockers.json"
 #auxs to save data
 #rents/lockers -> dict->
 def _save_rents(rents : list[Rent]) -> None:
-    data = [r.dict() for r in rents]
-    #write_json(RENTS_FILE, data)
-    write_json(RENTS_FILE, [r.model_dump(mode="json") for r in rents])
+    #load old rents
+    old_rents = [r.model_dump(mode="json") for r in load_rents()]  
+    new_rents = [r.model_dump(mode="json") for r in rents]
+
+    #logchange 
+    for new in new_rents:
+        
+        old = next((o for o in old_rents if o["id"] == new["id"]), None)
+        action = "CREATED" if old is None else "UPDATED"
+        log_change("rents", new["id"], old, new, action)
+
+    write_json(RENTS_FILE, new_rents) #save after loggind
 
 
 
 def _save_lockers(lockers: list[Locker]) -> None:
-    data = [l.dict() for l in lockers]
-    write_json(LOCKERS_FILE, data)
+    #load old lockers
+    old_lockers= [l.model_dump(mode="json") for l in load_lockers()]  
+    new_lockers = [l.model_dump(mode="json") for l in lockers]
+
+    #logchange 
+    for new in new_lockers:
+        
+        old = next((o for o in old_lockers if o["id"] == new["id"]), None)
+        action = "CREATED" if old is None else "UPDATED"
+        log_change("lockers", new["id"], old, new, action)
+
+    write_json(LOCKERS_FILE, new_lockers) #save after logging
+
 
 
 #Getters
@@ -32,16 +53,15 @@ def _save_lockers(lockers: list[Locker]) -> None:
 def all_rents() -> list[Rent]:
     return load_rents()
 
-#return rent that matches given ID or None if not found
-def get_rent_by_id(rent_id: str) -> Rent | None:
-    for r in load_rents():
-        if r.id == rent_id:
-            return r
-    return None
+
+#util funct to avoid repeating text in the functions below
+#find a rent inside a loaded list of rents, returns rent obj if found or none
+def get_rent(rents: list[Rent], rent_id: str) -> Rent | None:
+    return next((r for r in rents if r.id == rent_id), None)
 
 
 
-#function to cretae rent (still without locker) 
+#function to create rent (still without locker) 
 def create_rent(weight:int, size:RentSize):
     rents = load_rents()
     rent = Rent(
@@ -67,7 +87,7 @@ def dropoff(rent_id: str, locker_id: str): #assign rent to locker and chenge sta
     rents = load_rents()   #list that will be saved back
 
     # find the rent inside the list rents
-    rent = next((r for r in rents if r.id == rent_id), None)
+    rent = get_rent(rents, rent_id)
     if rent is None:
         raise ValueError("Rent not found")
 
@@ -98,12 +118,12 @@ def dropoff(rent_id: str, locker_id: str): #assign rent to locker and chenge sta
 
 
 #when customer drops off :locker is closed  - is waiting to pickup
-#WAITING_DROPOFF -> chang state do WAITING_PICKUP
+#WAITING_DROPOFF -> change state do WAITING_PICKUP
 def confirm_dropoff(rent_id:str):
     rents = load_rents()
 
     #search rent with the given id
-    rent = next ((r for r in rents if r.id == rent_id), None)
+    rent =get_rent(rents, rent_id)
     if rent is None:
         raise ValueError("Rent not found")
     
@@ -127,7 +147,7 @@ def retrieve(rent_id: str):
 
 
     #search rent with the given id
-    rent = next((r for r in rents if r.id == rent_id), None)
+    rent = get_rent(rents, rent_id)
     if rent is None:
         raise ValueError("Rent not found")
     

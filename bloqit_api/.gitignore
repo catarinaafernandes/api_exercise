@@ -1,10 +1,11 @@
-#virtual environment
+#virtual environments
 venv/
+.env/
 
 #python cache
 __pycache__/
 *.pyc
 
-#IDE directories
+#IDE
 .vscode/
 .idea/
