@@ -37,15 +37,13 @@ def _save_lockers(lockers: list[Locker]) -> None:
     old_lockers= [l.model_dump(mode="json") for l in load_lockers()]  
     new_lockers = [l.model_dump(mode="json") for l in lockers]
 
-    #logchange 
     for new in new_lockers:
         
         old = next((o for o in old_lockers if o["id"] == new["id"]), None)
         action = "CREATED" if old is None else "UPDATED"
         log_change("lockers", new["id"], old, new, action)
 
-    write_json(LOCKERS_FILE, new_lockers) #save after logging
-
+    write_json(LOCKERS_FILE, new_lockers)
 
 
 #Getters
