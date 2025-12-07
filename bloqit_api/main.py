@@ -29,9 +29,9 @@ def create_app():
             "docs" :"/docs"
         }
 
-
     return app
 
 
+app = create_app() 
 
-app = create_app()
+#TODO: tests + test outside local + add doc, update requirements

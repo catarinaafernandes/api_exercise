@@ -55,3 +55,6 @@ def load_rents():
     for r in get_rents():
         list.append(Rent(**r))
     return list
+
+
+#TODO change to a db and make seconds services and then re reoute accordingly
