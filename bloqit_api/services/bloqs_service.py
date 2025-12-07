@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from bloqit_api.schemas.blocks import Bloq
+from bloqit_api.schemas.bloqs import Bloq
 from bloqit_api.data.json_db import write_json, load_bloqs
 from bloqit_api.services.logger import log_change
 import uuid

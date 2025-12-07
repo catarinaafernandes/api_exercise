@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from bloqit_api.schemas.blocks import Bloq
+from bloqit_api.schemas.bloqs import Bloq
 from bloqit_api.schemas.lockers import Locker 
 from bloqit_api.schemas.rents import Rent
 
