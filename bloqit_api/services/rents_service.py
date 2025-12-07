@@ -15,7 +15,7 @@ LOCKERS_FILE = "lockers.json"
 
 
 #auxs to save data
-#rents/lockers -> dict->
+#for logs
 def _save_rents(rents : list[Rent]) -> None:
     #load old rents
     old_rents = [r.model_dump(mode="json") for r in load_rents()]  
@@ -28,7 +28,7 @@ def _save_rents(rents : list[Rent]) -> None:
         action = "CREATED" if old is None else "UPDATED"
         log_change("rents", new["id"], old, new, action)
 
-    write_json(RENTS_FILE, new_rents) #save after loggind
+    write_json(RENTS_FILE, new_rents) #save after logging
 
 
 
