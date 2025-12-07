@@ -1,40 +1,22 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, status
 from bloqit_api.services import rents_service
-from bloqit_api.data.json_db import load_rents
 from bloqit_api.schemas.rents import RentSize, Rent
-from pydantic import BaseModel
-from bloqit_api.services.rents_service import get_rent_by_id
+from bloqit_api.utils.errors import http_error
 
 router = APIRouter()
-
-
-#error handling (for exceptions)
-def http_error(message: str):
-    msg = message.lower()
-
-    if "not found" in msg:
-        return HTTPException(status_code=404, detail=message)
-    #404 for rent_id or locker_id not found
-
-    if "occupied" in msg or "unavailable" in msg:
-        return HTTPException(status_code=409, detail=message)
-    #409 for conflict of states - ex:
-
-    if "state" in msg:
-        return HTTPException(status_code=400, detail=message)
-    #400 - ex:
-
-    return HTTPException(status_code=400, detail=message)
-    #400 bad request, default error - error form client
-
 
 
 #GET 
 #read
 @router.get("/", response_model=list[Rent], 
-            status_code = status.HTTP_200_OK, summary="List all rents")
+            status_code = status.HTTP_200_OK,
+            summary="List all rents")
 def list_rents() -> list[Rent]:
-    return load_rents()
+    try:
+        return rents_service.get_all_rents()
+    except ValueError as e:
+        raise http_error(str(e))
+
 
 
 #get by id
@@ -43,9 +25,10 @@ def list_rents() -> list[Rent]:
             summary="Get a Rent by ID")
 def get_rent(rent_id:str):
     try:
-        return get_rent_by_id(rent_id)
-    except HTTPException as e:
-        raise e
+        return rents_service.get_rent_by_id(rent_id)
+
+    except ValueError as e:
+        raise http_error(str(e))
     
 
 
@@ -67,9 +50,9 @@ def create_rent(weight: int, size: RentSize):
 #post action in a resource that was already created
 @router.post("/{rent_id}/dropoff", response_model=Rent,
              summary= "Assign rent to locker and change state to WAITING DROPOFF")
-def dropoff(rent_id: str, lockerId:str):
+def dropoff(rent_id: str, locker_id:str):
     try:
-        return rents_service.dropoff(rent_id, lockerId)
+        return rents_service.dropoff(rent_id, locker_id)
     except ValueError as e:
         raise http_error(str(e))
     
@@ -85,7 +68,8 @@ def confirm_dropoff(rent_id:str):
     
 
 
-@router.post("/{rent_id}/retrieve", response_model=Rent)
+@router.post("/{rent_id}/retrieve", response_model=Rent,
+             summary= "Retrieve -parcel delivered")
 def retrieve(rent_id: str):
     try:
         return rents_service.retrieve(rent_id)

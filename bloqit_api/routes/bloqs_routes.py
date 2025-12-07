@@ -1,6 +1,7 @@
 from bloqit_api.schemas.bloqs import Bloq
 from bloqit_api.services.bloqs_service import all_bloqs, get_bloq_by_id
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, status
+from bloqit_api.utils.errors import http_error
 
 
 router = APIRouter()
@@ -20,5 +21,5 @@ def list_bloqs() -> list[Bloq]:
 def get_bloq(bloq_id:str):
     try:
         return get_bloq_by_id(bloq_id)
-    except HTTPException as e:
-        raise e
+    except Exception as e:
+        http_error(e)

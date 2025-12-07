@@ -9,9 +9,9 @@ def create_app():
 
     app = FastAPI(
 
-        title = "BloqIT locker API",
-        version= "1.0.1", #increment after memory loss :)
-        description= ("BloqIT Locker API — Bloqs, Lockers and Rents management. \n"
+        title = "BloqIT locker API"
+        ,version= "1.0.1" #increment after memory loss :) ,
+        ,description= ("BloqIT Locker API — Bloqs, Lockers and Rents management. \n"
         "Back online after the amnesia event, allowing customers to create, drop off and retrieve parcels.")   
      )
 
@@ -31,7 +31,8 @@ def create_app():
 
     return app
 
-
+#app instance for uvicorn
 app = create_app() 
 
 #TODO: tests + test outside local + add doc, update requirements
+

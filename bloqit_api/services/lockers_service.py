@@ -1,4 +1,3 @@
-from fastapi import HTTPException
 from bloqit_api.schemas.lockers import Locker
 from bloqit_api.data.json_db import load_lockers, write_json
 from bloqit_api.services.logger import log_change
@@ -24,7 +23,7 @@ def _save_lockers(lockers : list[Locker]) -> None:
 
 #getters
 #list every locker
-def all_lockers() -> list[Locker]:
+def get_all_lockers() -> list[Locker]:
     return load_lockers()
 
 
@@ -33,5 +32,5 @@ def get_locker_by_id(locker_id: str):
     locker = next((l for l in lockers if l.id == locker_id), None)
 
     if locker is None:
-        raise HTTPException(status_code=404, detail="Locker not found")
+        raise ValueError("Locker not found")
     return locker

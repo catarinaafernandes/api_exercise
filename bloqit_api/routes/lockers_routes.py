@@ -1,6 +1,7 @@
 from bloqit_api.schemas.lockers import Locker
-from bloqit_api.services.lockers_service import all_lockers, get_locker_by_id
-from fastapi import APIRouter, HTTPException, status
+from bloqit_api.services.lockers_service import get_all_lockers, get_locker_by_id
+from fastapi import APIRouter, status
+from bloqit_api.utils.errors import http_error
 
 
 
@@ -11,7 +12,7 @@ router = APIRouter()
 @router.get("/", response_model=list[Locker], 
             status_code = status.HTTP_200_OK, summary="List all lockers")
 def list_lockers() -> list[Locker]:
-    return all_lockers()
+    return get_all_lockers()
 
 
 #get by id
@@ -21,8 +22,9 @@ def list_lockers() -> list[Locker]:
 def get_locker(locker_id:str):
     try:
         return get_locker_by_id(locker_id)
-    except HTTPException as e:
-        raise e
+    
+    except ValueError as e:
+        raise http_error(str(e))
     
 
 """don´t need POST because we don´t have info about possibility of creating new lockers 
