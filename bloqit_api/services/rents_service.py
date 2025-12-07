@@ -8,6 +8,7 @@ from datetime import datetime
 import uuid #To generate unique IDs
 from bloqit_api.schemas.rents import RentSize, RentStatus, Rent
 from bloqit_api.services.logger import log_change
+from fastapi import HTTPException
 
 
 RENTS_FILE = "rents.json"
@@ -57,6 +58,14 @@ def all_rents() -> list[Rent]:
 def get_rent(rents: list[Rent], rent_id: str) -> Rent | None:
     return next((r for r in rents if r.id == rent_id), None)
 
+
+def get_rent_by_id(rent_id:str):
+    rents = bloqs = load_rents()
+    rent = next((r for r in rents if r.id == rent_id), None)
+
+    if rent is None:
+        raise HTTPException(status_code=404, detail="Rent not found")
+    return rent
 
 
 #function to create rent (still without locker) 

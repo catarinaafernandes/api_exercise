@@ -3,7 +3,7 @@ from bloqit_api.services import rents_service
 from bloqit_api.data.json_db import load_rents
 from bloqit_api.schemas.rents import RentSize, Rent
 from pydantic import BaseModel
-
+from bloqit_api.services.rents_service import get_rent_by_id
 
 router = APIRouter()
 
@@ -35,6 +35,18 @@ def http_error(message: str):
             status_code = status.HTTP_200_OK, summary="List all rents")
 def list_rents() -> list[Rent]:
     return load_rents()
+
+
+#get by id
+@router.get("/{rent_id}", response_model=Rent,
+            status_code=status.HTTP_200_OK, 
+            summary="Get a Rent by ID")
+def get_rent(rent_id:str):
+    try:
+        return get_rent_by_id(rent_id)
+    except HTTPException as e:
+        raise e
+    
 
 
 #POST
