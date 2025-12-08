@@ -6,11 +6,11 @@ import shutil
 from pathlib import Path
 
 
-#test with endpoints without python(already tetsed with postaman)
+#test with endpoints without python(already tested with postman)
 client = TestClient(app)
 
 
-#garantee that jsons event in tmep path go back to the origial state to isolate
+#garantee that jsons event in tmep path go back to the original state to isolate
 @pytest.fixture
 def tmp_env(monkeypatch, tmp_path):
     source = Path(__file__).parent.parent/"bloqit_api"/"data"
@@ -27,7 +27,8 @@ def tmp_env(monkeypatch, tmp_path):
     return test_data
 
 
-
+#test workflow complete
+#1)test create rent
 def test_create_rent(tmp_env):
     payload = {"weight":5, "size":"M"}
     response = client.post("/rents/",json=payload)
@@ -40,10 +41,10 @@ def test_create_rent(tmp_env):
     
 
     
-
+#2)test dropoff
 def test_dropoff(tmp_env):
 
-#create rent inside thus test
+#create rent inside this test
     payload = {"weight": 5, "size": "M"}
     response = client.post("/rents/", json=payload)
     rent_id = response.json()["id"]
@@ -57,7 +58,67 @@ def test_dropoff(tmp_env):
     assert data["lockerId"] == locker_id
     
   
+#3)test confirm dropoff
+def test_confirm_dropoff(tmp_env):
 
-"""to dropoff we need to use a rent that was already created so 
-it has to be in the state created and not in state waiitng dropoff"""
-#so use id rent from jsons in the previous state 
+    #create rent first
+    rent = client.post("/rents", json={"weight":5, "size": "M"}).json()
+    rent_id = rent["id"]
+
+    #dropoff
+    locker =  {"locker_id": "3c881050-54bb-48bb-9d2c-f221d10f876b"}
+    client.post(f"/rents/{rent_id}/dropoff", json=locker)
+
+    #confirm dropoff
+    response =   client.post(f"/rents/{rent_id}/confirm_dropoff")
+    data = response.json()
+
+    assert response.status_code == 200
+    assert data["status"] == RentStatus.WAITING_PICKUP.value
+
+
+
+#4) test retrive
+def test_retrieve(tmp_env):
+
+    #create rent 
+    rent = client.post("/rents", json={"weight":5, "size": "M"}).json()
+    rent_id = rent["id"]
+
+    #dropoff
+    locker =  {"locker_id": "3c881050-54bb-48bb-9d2c-f221d10f876b"}
+    client.post(f"/rents/{rent_id}/dropoff", json=locker)
+
+    #confirm dropoff
+    client.post(f"/rents/{rent_id}/confirm_dropoff")
+
+    #RETRIEVE
+    response =   client.post(f"/rents/{rent_id}/retrieve")
+    data = response.json()
+
+    assert response.status_code == 200
+    assert data["status"] == RentStatus.DELIVERED.value 
+
+
+    
+
+## other tests
+#tests if endpoint GET/rents responses correctly
+def test_list_all_rents(tmp_env):
+    response = client.get("/rents")
+    data = response.json()
+
+    assert response.status_code == 200
+    assert isinstance(data, list)
+
+
+
+#more tests - other situations
+def test_confirm_without_dropiff(tmp_env):
+    rent = client.post(f"/rents/", json ={"weight" :1, "size": "S"}).json()
+    client.post(f"/rents/{rent['id']}/dropoff", json={"locker_id":"3c881050-54bb-48bb-9d2c-f221d10f876b"})
+
+    response = client.post(f'/rents/{rent["id"]}/retrieve')
+    assert response.status_code >=400   #error code equal or higher than 400
+
+                                    

@@ -2,7 +2,7 @@ from fastapi import APIRouter, status
 from bloqit_api.services import rents_service
 from bloqit_api.schemas.rents import RentSize, Rent
 from bloqit_api.utils.errors import http_error
-from bloqit_api.dto.rent_request import RentCreateRequest, RentDropoffRequest,  RentRetriveRequest
+from bloqit_api.dto.rent_request import RentCreateRequest, RentDropoffRequest
 router = APIRouter()
 
 

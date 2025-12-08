@@ -1,30 +1,40 @@
-#BloqIT Locker API
+# BloqIT Locker API
+
+A **FASTAPI application built for BloqIT's technical challenge.** This API manages Bloqs -> Lockers -> Rents workflow, enabling parcel drop-off and retrieval while keeping logic clean, readable and scalable for future and real-world deployment.
 
 
-Features
+WORKFLOW
+
+| Step | Action          | Resulting Status |
+|------|-----------------|------------------|
+| 1    | Create rent     | `CREATED`        |
+| 2    | Dropoff         | `WAITING_DROPOFF`|
+| 3    | Confirm dropoff | `WAITING_PICKUP` |
+| 4    | Retrieve parcel | `DELIVERED`      |
+
+
+
+## Features
 > List and fetch Bloqs, Lockers and Rents
-> Create a rent
-> Dropoff
-> Confirm dropoff
-> Retrieve
-> JSON used as data storage(no DB in requirements)
-> Change logs epr entity(´/bloqit_api/logs´)
+> Create a rent with status
+> Dropoff - assign rent to a locker
+> Confirm dropoff (waiting pickup)
+> Retrieve (delivered complete)
+> JSON used as data storage(no DB)
+> Change logs per entity("/bloqit_api/logs")
 > Automated tests with pytest
 
 
-Structure
+## Structure
 
 ├── bloqit_api
 │   ├── data
 │   │   ├── bloqs.json
-│   │   ├── __init__.py
 │   │   ├── json_db.py
 │   │   ├── lockers.json
 │   │   └── rents.json
 │   ├── dto
-│   │   ├── __init__.py
 │   │   └── rent_request.py
-│   ├── __init__.py
 │   ├── logs
 │   │   ├── bloqs.log
 │   │   ├── lockers.log
@@ -60,7 +70,6 @@ Structure
     │   ├── bloqs.json
     │   ├── lockers.json
     │   └── rents.json
-    ├── __init__.py
     ├── older
     │   ├── test_json.py
     │   └── test_rent_manual.py
@@ -70,30 +79,63 @@ Structure
 
 
 
-How to run?
-
+ ## How to run?
+>Run locally
+```bash
 pip install -r requirements.txt
 uvicorn bloqit_api.main:app --reload
 
+```
 
-Main API Endpoints
+>Optionally you can expose externally with ngrok
+ngrok http 8000
 
 
-Running tests
+
+## Main API Endpoints
+- `POST /rents` -> Create rent  
+- `POST /rents/{id}/dropoff` -> Assign locker  
+- `POST /rents/{id}/confirm_dropoff` ->  Waiting Pickup  
+- `POST /rents/{id}/retrieve` ->  Delivered  
+- `GET /rents` ->  List rents  
+- `GET /rents/{id}`->  Rent details  
+- `GET /lockers` ->  List lockers  
+- `GET /bloqs` ->  List bloqs  
 
 
-Next Steps/Future improvements:
+Docs available at:
+http://127.0.0.1:8000/docs
 
->Migrate from JSON to a real database (ex:SQLAchemy) 
+
+## Running tests
+pytest
+
+Uses temporary JSON copies - real files never changed (except in older tests)
+
+
+## Design Notes
+-Separation of layers: routes/services/schemas/data
+-DTOs used for request validation
+-Business logic lives in /services
+-Logging for traceability
+
+
+
+## Next Steps/Future improvements:
+
+>Migrate from JSON to a real database (ex:SQLAlchemy) 
 >Add authentication
 >Implement a GUI to manage lockers,rents and delivery flow
 
 
 
-Made with Py
+## About
+This project was developed for BloqIT where the fictional scenario assumed that the original locker system had been lost after a collective amnesia event  - leaving only JSON files and parts of the model behind.
+This challenge provided an opportunity to reimplement the locker workflow while applying good programming practices in a simple way: service layer for logic, clean routes, validated data through schemas and architecture that is easy to understand, maintain and extend.
+
+    KISS in implementation
+    SOLID in structure
+    CRUD in action
 
 
-
-About
-
-
+Made with love, coffee and many prints - powered by Python and FASTAPI 
