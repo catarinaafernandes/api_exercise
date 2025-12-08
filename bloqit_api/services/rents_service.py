@@ -8,6 +8,7 @@ from datetime import datetime
 import uuid #To generate unique IDs
 from bloqit_api.schemas.rents import RentSize, RentStatus, Rent
 from bloqit_api.services.logger import log_change
+from pathlib import Path
 
 
 
@@ -17,7 +18,7 @@ LOCKERS_FILE = "lockers.json"
 
 #auxs to save data
 #for logs
-def save_rents(rents : list[Rent]) -> None:
+def save_rents(rents : list[Rent], path: Path | None = None) -> None:
     #load old rents
     old_rents = [r.model_dump(mode="json") for r in load_rents()]  
     new_rents = [r.model_dump(mode="json") for r in rents]
@@ -29,11 +30,11 @@ def save_rents(rents : list[Rent]) -> None:
         action = "CREATED" if old is None else "UPDATED"
         log_change("rents", new["id"], old, new, action)
 
-    write_json(RENTS_FILE, new_rents) #save after logging
+    write_json(RENTS_FILE, new_rents, path) #save after logging
 
 
 
-def save_lockers(lockers: list[Locker]) -> None:
+def save_lockers(lockers: list[Locker], path: Path | None = None) -> None:
     #load old lockers
     old_lockers= [l.model_dump(mode="json") for l in load_lockers()]  
     new_lockers = [l.model_dump(mode="json") for l in lockers]
@@ -44,7 +45,7 @@ def save_lockers(lockers: list[Locker]) -> None:
         action = "CREATED" if old is None else "UPDATED"
         log_change("lockers", new["id"], old, new, action)
 
-    write_json(LOCKERS_FILE, new_lockers)
+    write_json(LOCKERS_FILE, new_lockers, path)
 
 
 #Getters
@@ -71,7 +72,7 @@ def get_rent_by_id(rent_id:str):
 
 
 #function to create rent (still without locker) 
-def create_rent(weight:int, size:RentSize):
+def create_rent(weight:int, size:RentSize, path: Path | None = None):
     rents = load_rents()
     rent = Rent(
         id = str(uuid.uuid4()),
@@ -83,14 +84,14 @@ def create_rent(weight:int, size:RentSize):
     )
 
     rents.append(rent)
-    save_rents(rents)
+    save_rents(rents, path)
     return rent
 
 
 #DROPOFF - rent already created + ocupy one locker
 #states: creates rent - waiting dropoff - waiting pickup - delivered
 #rent need to be created to drop off
-def dropoff(rent_id: str, locker_id: str): #assign rent to locker and chenge state to WAITINGDROPOFF
+def dropoff(rent_id: str, locker_id: str, path: Path | None = None): #assign rent to locker and chenge state to WAITINGDROPOFF
 
     lockers= load_lockers()
     rents = load_rents()   #list that will be saved back
@@ -120,15 +121,15 @@ def dropoff(rent_id: str, locker_id: str): #assign rent to locker and chenge sta
     locker.isOccupied = True
 
     # save changes
-    save_rents(rents)
-    save_lockers(lockers)
+    save_rents(rents, path)
+    save_lockers(lockers, path)
 
     return rent
 
 
 #when customer drops off :locker is closed  - is waiting to pickup
 #WAITING_DROPOFF -> change state do WAITING_PICKUP
-def confirm_dropoff(rent_id:str):
+def confirm_dropoff(rent_id:str, path: Path | None = None ):
     rents = load_rents()
 
     #search rent with the given id
@@ -142,14 +143,14 @@ def confirm_dropoff(rent_id:str):
 
     #updates rents list
     rent.status = RentStatus.WAITING_PICKUP
-    save_rents(rents)
+    save_rents(rents, path)
 
     
     return rent
 
 #RETRIEVE - ends rent + desocupy locker
 #waiting_pickuo changes to DELIVERED state
-def retrieve(rent_id: str):
+def retrieve(rent_id: str, path: Path | None = None):
 
     rents = load_rents()
     lockers = load_lockers()
@@ -175,7 +176,7 @@ def retrieve(rent_id: str):
         save_lockers(lockers)
 
 
-    save_rents(rents)
+    save_rents(rents, path)
 
     return rent
 

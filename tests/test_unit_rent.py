@@ -1,37 +1,25 @@
-from bloqit_api.schemas.rents import RentSize, RentStatus
-from bloqit_api.services.rents_service import create_rent,dropoff, confirm_dropoff, retrieve, get_all_rents, save_rents, save_lockers
-from bloqit_api.services.lockers_service import get_all_lockers
-import bloqit_api.data.json_db as db
 from pathlib import Path
 import os
 
-
-
-os.environ["JSON_PATH"] = str(Path("tests/data")) 
-#db.DATA_PATH = Path("tests/data") 
-
 def test_flow():
+    from bloqit_api.schemas.rents import RentSize, RentStatus
+    from bloqit_api.services.rents_service import create_rent,dropoff, confirm_dropoff, retrieve
+    from bloqit_api.data.json_db import get_data_path
 
-    rents = get_all_rents()
-    lockers = get_all_lockers()
+    tmp_path = get_data_path()
+    rent = create_rent(weight = 5, size = RentSize.M, path=tmp_path)
 
-    rent = create_rent(weight = 5, size = RentSize.M)
-    #assert rent.status == "created"
-    #assert rent.status == "CREATED"
     assert rent.status == RentStatus.CREATED
     
 
-    rent = dropoff(rent.id, locker_id="3c881050-54bb-48bb-9d2c-f221d10f876b")
+    rent = dropoff(rent.id, locker_id="3c881050-54bb-48bb-9d2c-f221d10f876b", path=tmp_path)
     assert rent.status == RentStatus.WAITING_DROPOFF
-    #assert rent.status == "dropped"
 
-    rent = confirm_dropoff(rent.id)
+    rent = confirm_dropoff(rent.id, path=tmp_path)
     assert rent.status == RentStatus.WAITING_PICKUP
 
-    rent = retrieve(rent.id)
+    rent = retrieve(rent.id, path=tmp_path)
     assert rent.status == RentStatus.DELIVERED
 
-    save_rents(rents)
-    save_lockers(lockers) 
    
 #tests passed but need reset jsons

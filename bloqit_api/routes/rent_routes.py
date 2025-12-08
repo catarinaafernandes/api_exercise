@@ -2,7 +2,7 @@ from fastapi import APIRouter, status
 from bloqit_api.services import rents_service
 from bloqit_api.schemas.rents import RentSize, Rent
 from bloqit_api.utils.errors import http_error
-
+from bloqit_api.dto.rent_request import RentCreateRequest, RentDropoffRequest, RentConfirmDropoffRequest, RentRetriveRequest
 router = APIRouter()
 
 
@@ -38,9 +38,9 @@ def get_rent(rent_id:str):
             status_code = status.HTTP_201_CREATED, 
             summary="Create a new rent")
              
-def create_rent(weight: int, size: RentSize):
+def create_rent(request: RentCreateRequest):
     try:
-        return rents_service.create_rent(weight, size)
+        return rents_service.create_rent(request.weight, request.size)
     except ValueError as e:
         raise http_error(str(e))
     
@@ -50,9 +50,9 @@ def create_rent(weight: int, size: RentSize):
 #post action in a resource that was already created
 @router.post("/{rent_id}/dropoff", response_model=Rent,
              summary= "Assign rent to locker and change state to WAITING DROPOFF")
-def dropoff(rent_id: str, locker_id:str):
+def dropoff(request: RentDropoffRequest):
     try:
-        return rents_service.dropoff(rent_id, locker_id)
+        return rents_service.dropoff(request.rent_id, request.locker_id)
     except ValueError as e:
         raise http_error(str(e))
     
@@ -60,9 +60,9 @@ def dropoff(rent_id: str, locker_id:str):
 
 @router.post("/{rent_id}/confirm", response_model=Rent,
              summary="Confirm dropoff and set WAITING_PICKUP")
-def confirm_dropoff(rent_id:str):
+def confirm_dropoff(request: RentConfirmDropoffRequest):
     try:
-        return rents_service.confirm_dropoff(rent_id)
+        return rents_service.confirm_dropoff(request.rent_id)
     except ValueError as e:
         raise http_error(str(e))
     
@@ -70,9 +70,9 @@ def confirm_dropoff(rent_id:str):
 
 @router.post("/{rent_id}/retrieve", response_model=Rent,
              summary= "Retrieve -parcel delivered")
-def retrieve(rent_id: str):
+def retrieve(request: RentConfirmDropoffRequest):
     try:
-        return rents_service.retrieve(rent_id)
+        return rents_service.retrieve(request.rent_id)
     except ValueError as e:
         raise http_error(str(e))
     
