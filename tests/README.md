@@ -128,10 +128,10 @@ Uses temporary JSON copies - real files never changed (except in older tests)
 ### Design Patterns
 The project also integrates two architectural patterns to improve scalability and extensibility.
 
-- **Factory Pattern**: Centralizes the creation of `Rent` objects, keeping services clean and ready for future DB migration or extended fields.
-- **Observer Pattern (EventBus + Listeners)** : Enables event-driven workflows.  
+> **Factory Pattern**: Centralizes the creation of `Rent` objects, keeping services clean and ready for future DB migration or extended fields.
+> **Observer Pattern (EventBus + Listeners)** : Enables event-driven workflows.  
   
-  Example: when a rent is created/dropped/retrieved, listeners can trigger actions such as logs, alerts, notifications or analytics  without editing core logic.
+  Example: when a rent is created/dropped/retrieved, listeners can trigger actions such as logs, alerts, notifications or analytics  without editing core logic. In the future, we can think about send SMS/email after dropoff or notify user when locker is occupied too long.
 
 This keeps the system modular, testable and ready to grow.
 
