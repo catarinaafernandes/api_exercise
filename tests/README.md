@@ -50,6 +50,12 @@ WORKFLOW
 │   │   └── rents.py
 │   ├── services
 │   │   ├── bloqs_service.py
+│   │   ├── events
+│   │   │   ├── events_bus.py
+│   │   ├── factory
+│   │   │   └── rent_factory.py
+│   │   ├── listeners
+│   │   │   └── rent_listeners.py
 │   │   ├── lockers_service.py
 │   │   ├── logger.py
 │   │   └── rents_service.py

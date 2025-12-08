@@ -9,7 +9,9 @@ import uuid #To generate unique IDs
 from bloqit_api.schemas.rents import RentSize, RentStatus, Rent
 from bloqit_api.services.logger import log_change
 from pathlib import Path
-
+from bloqit_api.services.factory.rent_factory import RentFactory
+from bloqit_api.services.listeners import rent_listeners
+from bloqit_api.services.events.events_bus import EventBus
 
 
 RENTS_FILE = "rents.json"
@@ -74,17 +76,23 @@ def get_rent_by_id(rent_id:str):
 #function to create rent (still without locker) 
 def create_rent(weight:int, size:RentSize, path: Path | None = None):
     rents = load_rents()
-    rent = Rent(
-        id = str(uuid.uuid4()),
-        lockerId = None,
-        weight = weight,
-        size = size,
-        status = RentStatus.CREATED,
-        createdAt=datetime.utcnow()
-    )
+
+    # rent = Rent(
+    #     id = str(uuid.uuid4()),
+    #     lockerId = None,
+    #     weight = weight,
+    #     size = size,
+    #     status = RentStatus.CREATED,
+    #     createdAt=datetime.utcnow()
+    #)
+    #with design pattern factory we don't need this comented code
+    #we apply rent factory to create a new rent
+    
+    rent = RentFactory.create(weight, size)     #new object created
 
     rents.append(rent)
     save_rents(rents, path)
+    EventBus.emit("rent_created", rent) #design pattern observer
     return rent
 
 
@@ -124,6 +132,7 @@ def dropoff(rent_id: str, locker_id: str, path: Path | None = None): #assign ren
     save_rents(rents, path)
     save_lockers(lockers, path)
 
+    EventBus.emit("rent_dropoff", rent)
     return rent
 
 
@@ -178,5 +187,6 @@ def retrieve(rent_id: str, path: Path | None = None):
 
     save_rents(rents, path)
 
+    EventBus.emit("rent_retrieved", rent)
     return rent
 

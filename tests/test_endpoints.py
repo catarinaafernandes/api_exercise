@@ -114,7 +114,7 @@ def test_list_all_rents(tmp_env):
 
 
 #more tests - other situations
-def test_confirm_without_dropiff(tmp_env):
+def test_confirm_without_dropoff(tmp_env):
     rent = client.post(f"/rents/", json ={"weight" :1, "size": "S"}).json()
     client.post(f"/rents/{rent['id']}/dropoff", json={"locker_id":"3c881050-54bb-48bb-9d2c-f221d10f876b"})
 

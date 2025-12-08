@@ -32,6 +32,9 @@
 │   │   └── rents.py
 │   ├── services
 │   │   ├── bloqs_service.py
+│   │   ├── events
+│   │   ├── factory
+│   │   ├── listeners
 │   │   ├── lockers_service.py
 │   │   ├── logger.py
 │   │   ├── __pycache__
@@ -39,7 +42,6 @@
 │   └── utils
 │       ├── errors.py
 │       └── __pycache__
-├── estrutura.txt
 ├── legacy
 │   ├── index.js
 │   └── README.md
@@ -68,6 +70,7 @@
 │   │   ├── test_rent_manual.cpython-310.pyc
 │   │   ├── test_rent_manual.cpython-310-pytest-9.0.2.pyc
 │   │   └── test_unit_rent.cpython-310-pytest-9.0.2.pyc
+│   ├── README.md
 │   ├── test_endpoints.py
 │   └── test_unit_rent.py
 └── venv
@@ -94,4 +97,4 @@
     ├── lib64 -> lib
     └── pyvenv.cfg
 
-27 directories, 67 files
+30 directories, 67 files
