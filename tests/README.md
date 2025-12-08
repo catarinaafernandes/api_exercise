@@ -125,6 +125,15 @@ Uses temporary JSON copies - real files never changed (except in older tests)
 -Business logic lives in /services
 -Logging for traceability
 
+### Design Patterns
+The project also integrates two architectural patterns to improve scalability and extensibility.
+
+- **Factory Pattern**: Centralizes the creation of `Rent` objects, keeping services clean and ready for future DB migration or extended fields.
+- **Observer Pattern (EventBus + Listeners)** : Enables event-driven workflows.  
+  
+  Example: when a rent is created/dropped/retrieved, listeners can trigger actions such as logs, alerts, notifications or analytics  without editing core logic.
+
+This keeps the system modular, testable and ready to grow.
 
 
 ## Next Steps/Future improvements:
