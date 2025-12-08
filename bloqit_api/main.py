@@ -12,10 +12,11 @@ def create_app():
         title = "BloqIT locker API"
         ,version= "1.0.1" #increment after memory loss :) ,
         ,description= ("BloqIT Locker API — Bloqs, Lockers and Rents management. \n"
-        "Back online after the amnesia event, allowing customers to create, drop off and retrieve parcels.")   
+                        "Back online after the amnesia event, allowing customers to "
+                        "create, drop off and retrieve parcels.")   
      )
 
-    
+    #routers    
     app.include_router(rent_routes, prefix="/rents", tags=["Rents"])
     app.include_router(lockers_routes, prefix="/lockers", tags=["Lockers"])
     app.include_router(bloqs_routes, prefix="/bloqs", tags=["Bloqs"])
@@ -34,6 +35,5 @@ def create_app():
 #app instance for uvicorn
 app = create_app() 
 
-#TODO: tests + test outside local + add doc, update requirements
 
-#tested with localhost, ngrok and 
+#tested with localhost, ngrok and endpoints + py

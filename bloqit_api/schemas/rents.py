@@ -7,8 +7,8 @@ from pydantic import Field
 
 class RentStatus(str,Enum):
   CREATED = "CREATED"
-  WAITING_PICKUP = "WAITING_PICKUP"
   WAITING_DROPOFF = "WAITING_DROPOFF"
+  WAITING_PICKUP = "WAITING_PICKUP"
   DELIVERED = "DELIVERED"
 
 class RentSize(str, Enum):

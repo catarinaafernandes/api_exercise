@@ -22,4 +22,4 @@ def get_bloq(bloq_id:str):
     try:
         return get_bloq_by_id(bloq_id)
     except Exception as e:
-        http_error(e)
+        raise http_error(str(e))

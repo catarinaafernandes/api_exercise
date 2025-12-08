@@ -4,7 +4,6 @@ import pytest
 from bloqit_api.schemas.rents import RentSize, RentStatus
 import shutil
 from pathlib import Path
-from bloqit_api.data.json_db import get_data_path
 
 
 #test with endpoints without python(already tetsed with postaman)
@@ -29,20 +28,19 @@ def tmp_env(monkeypatch, tmp_path):
 
 
 
-#follow tests order with mark order
-@pytest.mark.order(1)
 def test_create_rent(tmp_env):
     payload = {"weight":5, "size":"M"}
     response = client.post("/rents/",json=payload)
     assert response.status_code==201
     data = response.json()
     assert data["weight"] == 5
-    assert data["size"] == "M"
-    assert data["status"] == RentStatus.CREATED
-    return data["id"] 
+    assert data["size"] == RentSize.M.value
+    assert data["status"] == RentStatus.CREATED.value
+    assert "id" in data
+    
 
     
-@pytest.mark.order(2)
+
 def test_dropoff(tmp_env):
 
 #create rent inside thus test
@@ -55,11 +53,11 @@ def test_dropoff(tmp_env):
     response = client.post(f"/rents/{rent_id}/dropoff", json=payload)
     data = response.json()
     assert response.status_code == 200
-    assert data["status"] == RentStatus.WAITING_DROPOFF
+    assert data["status"] == RentStatus.WAITING_DROPOFF.value
     assert data["lockerId"] == locker_id
     
   
 
 """to dropoff we need to use a rent that was already created so 
 it has to be in the state created and not in state waiitng dropoff"""
-#so use id rent from jsons in that state
+#so use id rent from jsons in the previous state 

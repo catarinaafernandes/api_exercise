@@ -3,7 +3,7 @@
 #workflow: create -dropoff- confirm dropoff - retireve
 
 from bloqit_api.data.json_db import load_rents, load_lockers, write_json
-from bloqit_api.schemas.lockers import Locker
+from bloqit_api.schemas.lockers import Locker, LockerStatus
 from datetime import datetime
 import uuid #To generate unique IDs
 from bloqit_api.schemas.rents import RentSize, RentStatus, Rent
@@ -109,7 +109,7 @@ def dropoff(rent_id: str, locker_id: str, path: Path | None = None): #assign ren
     if locker is None:
         raise ValueError("Locker not found")
     #attention:locker just can be used if open and not occupied! the locker can be open but occupied or closed and not occuoied
-    if locker.status != "OPEN" or locker.isOccupied:
+    if locker.status != LockerStatus.OPEN or locker.isOccupied:
         raise ValueError("Locker is unavailable or occupied")
 
     #updates rent 
@@ -173,7 +173,7 @@ def retrieve(rent_id: str, path: Path | None = None):
     locker = next((l for l in lockers if l.id == rent.lockerId), None)
     if locker:
         locker.isOccupied = False
-        save_lockers(lockers)
+        save_lockers(lockers, path)
 
 
     save_rents(rents, path)

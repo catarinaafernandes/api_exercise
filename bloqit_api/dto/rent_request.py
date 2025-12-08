@@ -9,8 +9,3 @@ class RentDropoffRequest(BaseModel):
     locker_id: str
     #rent_id: str
 
-# class RentConfirmDropoffRequest(BaseModel):
-#     pass
-
-class RentRetriveRequest(BaseModel):
-       pass

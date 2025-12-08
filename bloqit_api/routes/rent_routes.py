@@ -36,7 +36,7 @@ def get_rent(rent_id:str):
 #post withou id creates new resource
 @router.post("/", response_model=Rent, 
             status_code = status.HTTP_201_CREATED, 
-            summary="Create a new rent")
+            summary="CREATED a new rent")
              
 def create_rent(request: RentCreateRequest):
     try:
@@ -49,8 +49,9 @@ def create_rent(request: RentCreateRequest):
 #posts to id
 #post action in a resource that was already created
 @router.post("/{rent_id}/dropoff", response_model=Rent,
+             status_code=status.HTTP_200_OK,
              summary= "Assign rent to locker and change state to WAITING DROPOFF")
-def dropoff(rent_id,request: RentDropoffRequest):
+def dropoff(rent_id : str,request: RentDropoffRequest):
     try:
         return rents_service.dropoff(rent_id, request.locker_id)
     except ValueError as e:
@@ -58,7 +59,8 @@ def dropoff(rent_id,request: RentDropoffRequest):
     
 
 
-@router.post("/{rent_id}/confirm", response_model=Rent,
+@router.post("/{rent_id}/confirm_dropoff", response_model=Rent,
+             status_code=status.HTTP_200_OK,
              summary="Confirm dropoff and set WAITING_PICKUP")
 def confirm_dropoff(rent_id: str):
     try:
@@ -69,7 +71,8 @@ def confirm_dropoff(rent_id: str):
 
 
 @router.post("/{rent_id}/retrieve", response_model=Rent,
-             summary= "Retrieve -parcel delivered")
+             status_code=status.HTTP_200_OK,
+             summary= "Retrieve -parcel DELIVERED")
 def retrieve(rent_id: str):
     try:
         return rents_service.retrieve(rent_id)

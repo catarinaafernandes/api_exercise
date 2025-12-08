@@ -11,11 +11,12 @@ def http_error(message: str):
 
     if "occupied" in msg or "unavailable" in msg:
         return HTTPException(status_code=409, detail=message)
-    #409 for conflict of states - ex:
+    #409 for conflict of states - ex:trying to use a already occupied locker
+    
 
     if "state" in msg:
         return HTTPException(status_code=400, detail=message)
-    #400 - ex:
+    #400 -not authorized ex: try to drop off a rent that is in waiting pickup state
 
     return HTTPException(status_code=400, detail=message)
-    #400 bad request, default error - error form client
+    #400 bad request, other errors, default error - error form client

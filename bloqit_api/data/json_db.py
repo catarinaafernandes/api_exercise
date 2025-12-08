@@ -41,7 +41,7 @@ def get_rents():
 
 #convert to pydantic
 def load_bloqs():
-    list =[]
+    list=[]
     for b in get_bloqs():
         list.append(Bloq(**b))
     return list
