@@ -23,3 +23,6 @@ def test_flow():
 
    
 #tests passed but need reset jsons
+#tests passed with tmp path without changing original jsons
+#attention: we have to chose lockerd open and see state
+#these tests call services diretcly, now we eill do tests for endpoints diretcly

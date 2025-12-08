@@ -2,7 +2,7 @@ from fastapi import APIRouter, status
 from bloqit_api.services import rents_service
 from bloqit_api.schemas.rents import RentSize, Rent
 from bloqit_api.utils.errors import http_error
-from bloqit_api.dto.rent_request import RentCreateRequest, RentDropoffRequest, RentConfirmDropoffRequest, RentRetriveRequest
+from bloqit_api.dto.rent_request import RentCreateRequest, RentDropoffRequest,  RentRetriveRequest
 router = APIRouter()
 
 
@@ -50,9 +50,9 @@ def create_rent(request: RentCreateRequest):
 #post action in a resource that was already created
 @router.post("/{rent_id}/dropoff", response_model=Rent,
              summary= "Assign rent to locker and change state to WAITING DROPOFF")
-def dropoff(request: RentDropoffRequest):
+def dropoff(rent_id,request: RentDropoffRequest):
     try:
-        return rents_service.dropoff(request.rent_id, request.locker_id)
+        return rents_service.dropoff(rent_id, request.locker_id)
     except ValueError as e:
         raise http_error(str(e))
     
@@ -60,9 +60,9 @@ def dropoff(request: RentDropoffRequest):
 
 @router.post("/{rent_id}/confirm", response_model=Rent,
              summary="Confirm dropoff and set WAITING_PICKUP")
-def confirm_dropoff(request: RentConfirmDropoffRequest):
+def confirm_dropoff(rent_id: str):
     try:
-        return rents_service.confirm_dropoff(request.rent_id)
+        return rents_service.confirm_dropoff(rent_id)
     except ValueError as e:
         raise http_error(str(e))
     
@@ -70,15 +70,14 @@ def confirm_dropoff(request: RentConfirmDropoffRequest):
 
 @router.post("/{rent_id}/retrieve", response_model=Rent,
              summary= "Retrieve -parcel delivered")
-def retrieve(request: RentConfirmDropoffRequest):
+def retrieve(rent_id: str):
     try:
-        return rents_service.retrieve(request.rent_id)
+        return rents_service.retrieve(rent_id)
     except ValueError as e:
         raise http_error(str(e))
     
 
 
-#TODO: add DTOs (REST)
 
 
 
