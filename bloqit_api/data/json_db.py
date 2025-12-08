@@ -1,18 +1,19 @@
-import json
+import json,os
 from pathlib import Path
 from bloqit_api.schemas.bloqs import Bloq
 from bloqit_api.schemas.lockers import Locker 
 from bloqit_api.schemas.rents import Rent
 
 #json files path
-DATA_PATH = Path(__file__).parent
+DATA_PATH = Path(os.environ.get("JSON_PATH", Path(__file__).parent))
 
 
 #general function to read json - input
 #json to py (desserializ)
 def read_json(filename:str):
     file_path = DATA_PATH/filename
-    with open(DATA_PATH/file_path, "r", encoding="utf-8") as f:
+    
+    with open(file_path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 #general function to write json - output

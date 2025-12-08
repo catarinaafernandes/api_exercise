@@ -17,7 +17,7 @@ LOCKERS_FILE = "lockers.json"
 
 #auxs to save data
 #for logs
-def _save_rents(rents : list[Rent]) -> None:
+def save_rents(rents : list[Rent]) -> None:
     #load old rents
     old_rents = [r.model_dump(mode="json") for r in load_rents()]  
     new_rents = [r.model_dump(mode="json") for r in rents]
@@ -33,7 +33,7 @@ def _save_rents(rents : list[Rent]) -> None:
 
 
 
-def _save_lockers(lockers: list[Locker]) -> None:
+def save_lockers(lockers: list[Locker]) -> None:
     #load old lockers
     old_lockers= [l.model_dump(mode="json") for l in load_lockers()]  
     new_lockers = [l.model_dump(mode="json") for l in lockers]
@@ -83,7 +83,7 @@ def create_rent(weight:int, size:RentSize):
     )
 
     rents.append(rent)
-    _save_rents(rents)
+    save_rents(rents)
     return rent
 
 
@@ -120,8 +120,8 @@ def dropoff(rent_id: str, locker_id: str): #assign rent to locker and chenge sta
     locker.isOccupied = True
 
     # save changes
-    _save_rents(rents)
-    _save_lockers(lockers)
+    save_rents(rents)
+    save_lockers(lockers)
 
     return rent
 
@@ -142,7 +142,7 @@ def confirm_dropoff(rent_id:str):
 
     #updates rents list
     rent.status = RentStatus.WAITING_PICKUP
-    _save_rents(rents)
+    save_rents(rents)
 
     
     return rent
@@ -172,10 +172,10 @@ def retrieve(rent_id: str):
     locker = next((l for l in lockers if l.id == rent.lockerId), None)
     if locker:
         locker.isOccupied = False
-        _save_lockers(lockers)
+        save_lockers(lockers)
 
 
-    _save_rents(rents)
+    save_rents(rents)
 
     return rent
 

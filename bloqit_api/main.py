@@ -15,7 +15,7 @@ def create_app():
         "Back online after the amnesia event, allowing customers to create, drop off and retrieve parcels.")   
      )
 
-
+    
     app.include_router(rent_routes, prefix="/rents", tags=["Rents"])
     app.include_router(lockers_routes, prefix="/lockers", tags=["Lockers"])
     app.include_router(bloqs_routes, prefix="/bloqs", tags=["Bloqs"])
@@ -36,3 +36,4 @@ app = create_app()
 
 #TODO: tests + test outside local + add doc, update requirements
 
+#tested with localhost, ngrok and 

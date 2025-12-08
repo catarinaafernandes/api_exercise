@@ -1,6 +1,9 @@
-from bloqit_api.services.rents_service import dropoff, retrieve, confirm_dropoff, create_rent
+from bloqit_api.services.rents_service import dropoff, retrieve, confirm_dropoff, create_rent, get_all_rents, save_rents, save_lockers
+from bloqit_api.services.lockers_service import get_all_lockers
 from bloqit_api.schemas.rents import RentSize
 
+rents = get_all_rents()
+lockers = get_all_lockers()
 rent = create_rent(weight = 5, size = RentSize.M)
 print("Rent created:", rent)
 
@@ -17,6 +20,9 @@ print("waiting pickup", rent)
 rent = retrieve(rent.id)
 print("delivered:", rent)
 
+save_rents(rents)
+save_lockers(lockers)
 
 
-#TODO: test passed, reset jsons - need to track modifications to logfiles      
+#TODO: test passed, need to reset jsons
+# already track modifications to logfiles      
