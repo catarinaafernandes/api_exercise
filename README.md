@@ -26,7 +26,7 @@ WORKFLOW
 
 
 ## Structure
-
+```
 ├── bloqit_api
 │   ├── data
 │   │   ├── bloqs.json
@@ -82,7 +82,7 @@ WORKFLOW
     ├── README.md
     ├── test_endpoints.py
     └── test_unit_rent.py
-
+```
 
 
  ## How to run?
